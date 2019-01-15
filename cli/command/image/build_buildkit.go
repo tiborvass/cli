@@ -102,8 +102,14 @@ func runBuildBuildKit(dockerCli command.Cli, options buildOptions) error {
 		remote = clientSessionRemote
 	case urlutil.IsGitURL(options.context):
 		remote = options.context
+		if options.dockerfileFromStdin() {
+			dockerfileReader = os.Stdin
+		}
 	case urlutil.IsURL(options.context):
 		remote = options.context
+		if options.dockerfileFromStdin() {
+			dockerfileReader = os.Stdin
+		}
 	default:
 		return errors.Errorf("unable to prepare context: path %q not found", options.context)
 	}
