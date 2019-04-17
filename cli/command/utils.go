@@ -161,3 +161,36 @@ func ValidateOutputPathFileMode(fileMode os.FileMode) error {
 	}
 	return nil
 }
+
+
+func index(ptrn, args []string) int {
+	j := 0
+	if len(ptrn) > 0 {
+		for i, arg := range args {
+			if j < len(ptrn) && ptrn[j] == arg {
+				j++
+			} else {
+				j = 0
+			}
+			if len(ptrn) == j {
+				return i + 1 - j
+			}
+		}
+	}
+	return -1
+}
+
+// ReplaceArgs returns args that is potentially modified by replacing the pattern slice
+// found in args with the replace slice. requireIdx is the index at which pattern needs
+// to be matched at (or -1 to disregard that).
+// It also returns a boolean indicating whether a replacement happened or not.
+func ReplaceArgs(pattern, replace, args []string, requireIdx int) ([]string, bool) {
+	idx := index(pattern, args)
+	if (requireIdx != -1 && requireIdx != idx) || idx == -1 {
+		return args, false
+	}
+	out := append([]string{}, args[:idx]...)
+	out = append(out, replace...)
+	out = append(out, args[idx+len(pattern):]...)
+	return out, true
+}
