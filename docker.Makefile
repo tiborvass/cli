@@ -55,8 +55,14 @@ build_e2e_image:
 DOCKER_RUN_NAME_OPTION := $(if $(DOCKER_CLI_CONTAINER_NAME),--name $(DOCKER_CLI_CONTAINER_NAME),)
 DOCKER_RUN := docker run --rm $(ENVVARS) $(DOCKER_CLI_MOUNTS) $(DOCKER_RUN_NAME_OPTION)
 
-binary: build_binary_native_image ## build the CLI
-	$(DOCKER_RUN) $(BINARY_NATIVE_IMAGE_NAME)
+binary:
+	docker buildx bake binary
+
+dynbinary:
+	USE_GLIBC=1 docker buildx bake dynbinary
+
+cross:
+	docker buildx bake cross
 
 build: binary ## alias for binary
 

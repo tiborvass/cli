@@ -30,20 +30,27 @@ lint: ## run all the lint tools
 	gometalinter --config gometalinter.json ./...
 
 .PHONY: binary
-binary:
-	docker buildx bake binary
+binary: ## build executable
+	./scripts/build/binary
 
 .PHONY: plugins
 plugins: ## build example CLI plugins
 	./scripts/build/plugins
 
 .PHONY: cross
-cross:
-	docker buildx bake cross
+cross: binary
+
+.PHONY: binary-windows
+binary-windows: ## build executable for Windows
+	GOOS=windows ./scripts/build/binary
 
 .PHONY: plugins-windows
 plugins-windows: ## build example CLI plugins for Windows
 	./scripts/build/plugins-windows
+
+.PHONY: binary-osx
+binary-osx: ## build executable for macOS
+	GOOS=darwin ./scripts/build/binary
 
 .PHONY: plugins-osx
 plugins-osx: ## build example CLI plugins for macOS
@@ -51,7 +58,7 @@ plugins-osx: ## build example CLI plugins for macOS
 
 .PHONY: dynbinary
 dynbinary: ## build dynamically linked binary
-	USE_GLIBC=1 docker buildx bake dynbinary
+	GO_BUILDMODE=dynamic ./scripts/build/binary
 
 vendor: vendor.conf ## check that vendor matches vendor.conf
 	rm -rf vendor
