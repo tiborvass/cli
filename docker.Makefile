@@ -56,13 +56,13 @@ DOCKER_RUN_NAME_OPTION := $(if $(DOCKER_CLI_CONTAINER_NAME),--name $(DOCKER_CLI_
 DOCKER_RUN := docker run --rm $(ENVVARS) $(DOCKER_CLI_MOUNTS) $(DOCKER_RUN_NAME_OPTION)
 
 binary:
-	docker buildx bake binary
+	VERSION=$(VERSION) docker buildx bake binary
 
 dynbinary:
-	USE_GLIBC=1 docker buildx bake dynbinary
+	USE_GLIBC=1 VERSION=$(VERSION) docker buildx bake dynbinary
 
 cross:
-	docker buildx bake cross
+	VERSION=$(VERSION) docker buildx bake cross
 
 build: binary ## alias for binary
 
